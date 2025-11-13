@@ -6,8 +6,5 @@ namespace CitiesCountriesWebApp.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
-        [ValidateNever]
-        public ICollection<City> Cities { get; set; }
     }
 }

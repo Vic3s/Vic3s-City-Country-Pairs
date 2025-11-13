@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using CitiesCountriesWebApp.Data;
 using CitiesCountriesWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CitiesCountriesWebApp.Controllers
 {
@@ -8,19 +10,31 @@ namespace CitiesCountriesWebApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDbContext _context;
+
+        public HomeController(ILogger<HomeController> logger,
+            ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            var cityData = await _context.City
+                .Join(_context.Country,
+                    city => city.CountryId,
+                    country => country.Id,
+                    (city, country) => new ViewModels.CountryCityViewModel
+                    {
+                        CityId = city.Id,
+                        CityName = city.Name,
+                        CountryName = country.Name
+                        
+                    })
+                .OrderBy(vm => vm.CityName)
+                .ToListAsync();
+            return View(cityData);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

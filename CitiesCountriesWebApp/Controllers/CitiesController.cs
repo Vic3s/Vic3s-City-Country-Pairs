@@ -26,25 +26,6 @@ namespace CitiesCountriesWebApp.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Cities/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var city = await _context.City
-                .Include(c => c.Country)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (city == null)
-            {
-                return NotFound();
-            }
-
-            return View(city);
-        }
-
         // GET: Cities/Create
         public IActionResult Create()
         {
@@ -159,6 +140,24 @@ namespace CitiesCountriesWebApp.Controllers
         private bool CityExists(int id)
         {
             return _context.City.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> AllCitiesList()
+        {
+            var cityData = await _context.City
+                .Join(_context.Country,
+                    city => city.CountryId, 
+                    country => country.Id, 
+                    (city, country) => new ViewModels.CountryCityViewModel
+                    {
+                        CityId = city.Id,
+                        CityName = city.Name,
+                        CountryName = country.Name
+                    })
+                .OrderBy(vm => vm.CityName)
+                .ToListAsync();
+
+            return View(cityData);
         }
     }
 }
