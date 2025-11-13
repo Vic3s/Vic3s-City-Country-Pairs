@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CitiesCountriesWebApp.Data;
+using CitiesCountriesWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CitiesCountriesWebApp.Data;
-using CitiesCountriesWebApp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CitiesCountriesWebApp.Controllers
 {
+    [Authorize]
     public class CountriesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -40,9 +42,17 @@ namespace CitiesCountriesWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(country);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(country);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("Name", "This country alerady exists!!!");
+
+                }
             }
             return View(country);
         }

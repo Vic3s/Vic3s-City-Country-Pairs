@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CitiesCountriesWebApp.Data;
+using CitiesCountriesWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CitiesCountriesWebApp.Data;
-using CitiesCountriesWebApp.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CitiesCountriesWebApp.Controllers
 {
+    [Authorize]
     public class CitiesController : Controller
     {
         private readonly ApplicationDbContext _context;

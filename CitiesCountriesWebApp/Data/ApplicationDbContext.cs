@@ -12,5 +12,14 @@ namespace CitiesCountriesWebApp.Data
         }
         public DbSet<CitiesCountriesWebApp.Models.City> City { get; set; } = default!;
         public DbSet<CitiesCountriesWebApp.Models.Country> Country { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Country>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
